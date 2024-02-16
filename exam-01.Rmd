@@ -1,6 +1,6 @@
 ---
 title: "Take Home Exam #1"
-author: "Adam J Sullivan"
+author: "Yihan Wang (April)"
 date: "February 24, 2024"
 output: html_document
 ---
@@ -96,13 +96,47 @@ The main data is in the `flights` data frame, but there are additional data sets
 
 ## Questions
 
+``` {r}
+library(tidyverse)
+library(nycflights13)
+```    
+
 1.  **Question 1 (10 points)** - What are the ten most common destinations for flights from NYC airports in 2013?
     Make a table that lists these in descending order of frequency and shows the number of fligts heading to each airport.
+
+
+``` {r}
+
+top_destinations <- flights %>%
+  group_by(dest) %>%
+  summarise(NumberOfFlights = n()) %>%
+  arrange(desc(NumberOfFlights)) %>%
+  slice_head(n = 10)
+
+top_destinations
+
+
+```    
 
 2.  **Question 2 (10 points)** - Which airlines have the most flights departing from NYC airports in 2013?
     Make a table that lists these in descending order of frequency and shows the number of flights for each airline.
     In your narrative mention the names of the airlines as well.
     *Hint:* You can use the `airlines` dataset to look up the airline name based on `carrier` code.
+
+``` {r}
+
+flight_counts <- flights %>%
+   group_by(carrier) %>%
+   summarise(number_of_flights = n()) %>%
+   arrange(desc(number_of_flights))
+flight_counts_with_names <- flight_counts %>%
+   left_join(airlines, by = "carrier") %>%
+   select(name, number_of_flights)
+flight_counts_with_names
+
+
+
+``` 
 
 3.  **Question 3 (10 points)** - Consider only flights that have non-missing arrival delay information.
     Your answer should include the name of the carrier in addition to the carrier code and the values asked.
