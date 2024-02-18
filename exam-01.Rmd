@@ -188,15 +188,34 @@ weather %>%
 ``` 
  
 
-
-
 5.  **Question 5 (15 points)** - Consider breaking the day into four time intervals: 12:01am-6am, 6:01am-12pm, 12:01pm-6pm, 6:01pm-12am.
 
     a\.
     Calculate the proportion of flights that are delayed at departure at each of these time intervals.
 
+``` {r}
+flights <- flights %>%
+  mutate(time_of_day = case_when(
+    sched_dep_time >= 001  & sched_dep_time <= 600  ~ "12:01am-6am",
+    sched_dep_time >= 601  & sched_dep_time <= 1200 ~ "6:01am-12pm",
+    sched_dep_time >= 1201 & sched_dep_time <= 1800 ~ "12:01pm-6pm",
+    sched_dep_time >= 1801                          ~ "6:01pm-12am"))
+
+flights %>%
+  filter(!is.na(dep_delay)) %>%
+  mutate(dep_delayed = ifelse(dep_delay > 0, "delayed", "ontime")) %>%
+  count(time_of_day, dep_delayed) %>%
+  group_by(time_of_day) %>%
+  mutate(prop_delayed = n / sum(n)) %>%
+  filter(dep_delayed == "delayed") %>%
+  arrange(prop_delayed)
+``` 
     b\.
     Comment on how the likelihood of being delayed change throughout the day?
+
+The likelihood of flight delays increased at first, then goes down.
+
+
 
 6.  **Question 6 (15 points)** - Find the flight with the longest air time.
 
