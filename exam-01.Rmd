@@ -223,26 +223,31 @@ The likelihood of flight delays increased at first, then goes down.
     How long is this flight?
     
 ``` {r}
-flights %>%
-  arrange(desc(air_time)) %>%
-  slice(1) %>%
-  select(air_time) %>%
-  inner_join(planes, by = "air_time") %>%
-  select(air_time)
+longest_flight <-flights %>%
+  filter(!is.na(air_time)) %>%
+  arrange(desc(air_time)) %>% 
+  slice(1)
+longest_flight$air_time
+  
 ``` 
     b\.
     What city did it fly to?
 
 ``` {r}
-flights %>%
-  arrange(desc(air_time)) %>%
-  slice(1) %>%
-  select(dest, tailnum) %>%
-  inner_join(planes, by = "tailnum") %>%
-  select(dest, tailnum)
+longest_flight %>%
+  select(tailnum, dest)
+  
 ``` 
     c\.
     How many seats does the plane that flew this flight have?
+
+``` {r}
+longest_flight %>%
+  select(tailnum) %>%
+  inner_join(planes, by = "tailnum") %>%
+  select(tailnum, seats)
+  
+```
 
 7.  **Question 7 (15 pts)** - The `airports` data frame contains information on a large number of primarily American airports.
     These data include location information for these airports in the form of latitude and longitude coordinates.
@@ -269,6 +274,24 @@ airports %>%
     You will have to create `arrival` yourself, it is a categorical variable that is equal to `"ontime"` when `arr_delay <= 0` and `"delayed"` when `arr_delay > 0`.
 
 ![](img/plot-to-recreate.png)
+ 
+``` {r}
+flights %>% 
+  filter(month == 12, dest %in% c("PHL", "RDU")) %>% 
+  mutate(arrival = ifelse(arr_delay > 0, "delayed", "ontime")) %>%
+  filter(!is.na(arrival)) %>%
+  ggplot(aes(x = arrival, y = dep_delay, color = dest)) + 
+    geom_boxplot() + 
+    facet_grid(dest ~ origin) + 
+    labs(title = "On time performance of NYC flights",
+         subtitle = "December 2013",
+         x = "Arrival",
+         y = "Departure delay",
+         color = "Destination")
+``` 
+ The plot shows the departure delay at December 13, comparing the flights to the destination of "PHL", "RDU"
+ 
+
 
 **Extra Credit (5 pts)** - Create a visualization that effectively shows if there is a relationship between the average daily departure delay and the average daily temperature for all three New York city airports.
 Your answer must be given in a single pipe.
