@@ -181,9 +181,6 @@ flights %>%
   arrange(desc(dep_delay)) %>%
   slice(1) %>%
   select(dep_delay, month, day, origin)
-oringin_airport_name <- airports %>%
-  filter(faa == max_delay_flight$origin) %>%
-  select(name)
 ```   
   
 ``` {r}
@@ -304,14 +301,19 @@ Your answer must be given in a single pipe.
 (You should only spend time on this question once you have finished answering the others)
 
 ``` {r}
-flights_weather <- inner_join(flights, weather, by = c("year", "month", "day", "origin",
-                                                       "hour")) %>%
+inner_join(flights, weather, by = c("year", "month", "day", "origin", "hour")) %>%
   group_by(month, day, origin) %>%
-  summarise(avg_dep_delay = mean(dep_delay, na.rm = TRUE),
-            avg_temp = mean(temp, na.rm = TRUE))
-
-ggplot(flights_weather, aes(x = avg_temp, y = avg_dep_delay)) +
+  summarise(
+    avg_dep_delay = mean(dep_delay, na.rm = TRUE),
+    avg_temp = mean(temp, na.rm = TRUE),
+    .groups = 'drop' 
+  ) %>%
+  ggplot(aes(x = avg_temp, y = avg_dep_delay)) +
   geom_point(alpha = 0.3) +
   facet_wrap(~ origin) +
-  labs(x = "Average Temperature", y = "Average Delay (min)")
+  labs(
+    title = "On time performance of NYC flights",
+    subtitle = "December 2023",
+    x = "Average Temperature",
+    y = "Average Delay (min)")
 ``` 
