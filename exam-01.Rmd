@@ -244,10 +244,9 @@ airports %>%
     How many seats does the plane that flew this flight have?
 
 ``` {r}
-longest_flight %>%
-  select(tailnum) %>%
-  inner_join(planes, by = "tailnum") %>%
-  select(tailnum, seats)
+planes %>%
+  filter(tailnum == longest_flight$tailnum) %>%
+  select(seats)
   
 ```
 
