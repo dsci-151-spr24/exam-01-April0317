@@ -181,6 +181,9 @@ flights %>%
   arrange(desc(dep_delay)) %>%
   slice(1) %>%
   select(dep_delay, month, day, origin)
+oringin_airport_name <- airports %>%
+  filter(faa == max_delay_flight$origin) %>%
+  select(name)
 ```   
   
 ``` {r}
@@ -215,7 +218,9 @@ flights %>%
     b\.
     Comment on how the likelihood of being delayed change throughout the day?
 
-The likelihood of flight delays increased at first, then goes down.
+Early Morning (12:01am-6am): This time interval might have a lower proportion of delays due to fewer flights at night and lower air and airport traffic volumes.
+Morning Rush (6:01am-12pm): As daytime flights begin, air traffic increases, which could lead to a higher proportion of delays.
+Afternoon and Evening (12:01pm-6pm and 6:01pm-12am): These intervals are typically when flight volume is high, especially in the evening, which could result in a higher proportion of delays due to accumulated delays, busier airport operations, and adverse weather conditions.
 
 
 
