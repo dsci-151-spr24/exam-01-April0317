@@ -486,20 +486,63 @@ common destinations for flights from NYC airports in 2013? Make a table
 that lists these in descending order of frequency and shows the number
 of fligts heading to each airport.</li>
 </ol>
-<pre class="r"><code>airports_by_destination &lt;- airports %&gt;%
-  count() %&gt;%
-  arrange(desc(n))
+<pre class="r"><code>top_destinations &lt;- flights %&gt;%
+  group_by(dest) %&gt;%
+  summarise(NumberOfFlights = n()) %&gt;%
+  arrange(desc(NumberOfFlights)) %&gt;%
+  slice_head(n = 10)
 
-airports_by_destination &lt;- airports %&gt;%
-  summarise(n = n())</code></pre>
+top_destinations</code></pre>
+<pre><code>## # A tibble: 10 × 2
+##    dest  NumberOfFlights
+##    &lt;chr&gt;           &lt;int&gt;
+##  1 ORD             17283
+##  2 ATL             17215
+##  3 LAX             16174
+##  4 BOS             15508
+##  5 MCO             14082
+##  6 CLT             14064
+##  7 SFO             13331
+##  8 FLL             12055
+##  9 MIA             11728
+## 10 DCA              9705</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li><p><strong>Question 2 (10 points)</strong> - Which airlines have the
+<li><strong>Question 2 (10 points)</strong> - Which airlines have the
 most flights departing from NYC airports in 2013? Make a table that
 lists these in descending order of frequency and shows the number of
 flights for each airline. In your narrative mention the names of the
 airlines as well. <em>Hint:</em> You can use the <code>airlines</code>
 dataset to look up the airline name based on <code>carrier</code>
-code.</p></li>
+code.</li>
+</ol>
+<pre class="r"><code>flight_counts &lt;- flights %&gt;%
+   group_by(carrier) %&gt;%
+   summarise(number_of_flights = n()) %&gt;%
+   arrange(desc(number_of_flights))
+flight_counts_with_names &lt;- flight_counts %&gt;%
+   left_join(airlines, by = &quot;carrier&quot;) %&gt;%
+   select(name, number_of_flights)
+flight_counts_with_names</code></pre>
+<pre><code>## # A tibble: 16 × 2
+##    name                        number_of_flights
+##    &lt;chr&gt;                                   &lt;int&gt;
+##  1 United Air Lines Inc.                   58665
+##  2 JetBlue Airways                         54635
+##  3 ExpressJet Airlines Inc.                54173
+##  4 Delta Air Lines Inc.                    48110
+##  5 American Airlines Inc.                  32729
+##  6 Envoy Air                               26397
+##  7 US Airways Inc.                         20536
+##  8 Endeavor Air Inc.                       18460
+##  9 Southwest Airlines Co.                  12275
+## 10 Virgin America                           5162
+## 11 AirTran Airways Corporation              3260
+## 12 Alaska Airlines Inc.                      714
+## 13 Frontier Airlines Inc.                    685
+## 14 Mesa Airlines Inc.                        601
+## 15 Hawaiian Airlines Inc.                    342
+## 16 SkyWest Airlines Inc.                      32</code></pre>
+<ol start="3" style="list-style-type: decimal">
 <li><p><strong>Question 3 (10 points)</strong> - Consider only flights
 that have non-missing arrival delay information. Your answer should
 include the name of the carrier in addition to the carrier code and the
