@@ -296,3 +296,16 @@ flights %>%
 **Extra Credit (5 pts)** - Create a visualization that effectively shows if there is a relationship between the average daily departure delay and the average daily temperature for all three New York city airports.
 Your answer must be given in a single pipe.
 (You should only spend time on this question once you have finished answering the others)
+
+``` {r}
+flights_weather <- inner_join(flights, weather, by = c("year", "month", "day", "origin",
+                                                       "hour")) %>%
+  group_by(month, day, origin) %>%
+  summarise(avg_dep_delay = mean(dep_delay, na.rm = TRUE),
+            avg_temp = mean(temp, na.rm = TRUE))
+
+ggplot(flights_weather, aes(x = avg_temp, y = avg_dep_delay)) +
+  geom_point(alpha = 0.3) +
+  facet_wrap(~ origin) +
+  labs(x = "Average Temperature", y = "Average Delay (min)")
+``` 
