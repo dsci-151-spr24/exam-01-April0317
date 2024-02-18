@@ -289,7 +289,7 @@ flights %>%
          y = "Departure delay",
          color = "Destination")
 ``` 
- The plot shows the departure delay at December 13, comparing the flights to the destination of "PHL", "RDU"
+ The plot shows the departure delay at December 13, comparing the flights to the destination of "PHL", "RDU".
  
 
 
